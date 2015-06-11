@@ -4,13 +4,9 @@ import ddf.minim.*;
 OPC opc;
 PImage im;
 Minim minim;
-//AudioPlayer song;
 FFT fft;
 float[] fftFilter;
 
-//AudioPlayer noise;
-//FFT noisefft;
-//float[] noisefftFilter;
 
 boolean noisePlaying;
 boolean off;
@@ -36,14 +32,9 @@ void setup()
   in = minim.getLineIn(Minim.STEREO, 512);
  
  // Small buffer size!
-//  song = minim.loadFile(songFilename, 512);
   fft = new FFT(in.bufferSize(), in.sampleRate());
   fftFilter = new float[fft.specSize()]; 
   
-//  noise = minim.loadFile(noiseFilename, 512);
-//  noise.setGain(-80.0);
-//  noisefft = new FFT(noise.bufferSize(), noise.sampleRate());
-//  noisefftFilter = new float[noisefft.specSize()]; 
 
   // Load a sample image
   im = loadImage("flames.png");
@@ -71,22 +62,7 @@ void setup()
 
 void keyPressed()
 {
-//  if (key == 's' || key == 'S') {
-////    song.cue(295000);
-//    song.play();
-//    off = false;
-//  }
-//  if (key == 'r' || key == 'R') {
-//    song.pause();
-//    song.rewind();
-//    noise.pause();
-//    noise.rewind();
-//    noisePlaying = false;
-//    off = false;
-//  }
-//  if (key == 'o' || key == 'O') {
-//    off = !off;
-//  }
+
 }
 
 
@@ -112,51 +88,19 @@ void draw()
     fftFilter[i] = max(fftFilter[i] * decay, log(1 + fft.getBand(i)));
   }
   
-//  noisefft.forward(in.mix);
-//  for (int i = 0; i < noisefftFilter.length; i++) {
-//    noisefftFilter[i] = max(noisefftFilter[i] * decay, log(1 + noisefft.getBand(i)));
-//  }
-  
+
   for (int i = 4; i < fftFilter.length; i+= 2) {
     if (i > 34) break;
     float scale = 0;
-//    if (song.position() < 7000) {
-//      scale = 1-(float)song.position() / 7000.0;
-//    }
-//    if (noisePlaying && song.position() < 320000) {
-//      scale = (float)(song.position() - 300000) / 20000.0 * 1.2;
-//    } else if (noisePlaying && song.position() >= 320000) {
-//      scale = 1;
-//    }
+
     fill(240, 240, 240);
     stroke(240, 240, 240);
     float value = pow((fftFilter[i] + fftFilter[i+1])/2, 0.75) * pow(60/(60-i), 0.4);
-//    if (song.position() < 7000) {
-//      rect(((i-4)/2 + 0.5) * width / 17, 0, width / 17, (height - value * height/2.5) * (1-scale) + height * scale);
-//    } else {
+
       rect(((i-4)/2 + 0.5) * width / 17, 0, width / 17, (height - value * height/2.5) * (1-scale));
-//    }
   }
   
-//  if (noisePlaying) {
-//    float scale = 1;
-//    if (song.position() < 320000) {
-//      scale = (float)(song.position() - 300000) / 20000.0;
-//    }
-//    for (int i = 4; i < noisefftFilter.length; i+= 2) {
-//      if (i > 34) break;
-//      fill(200, 200, 200);
-//    stroke(200, 200, 200);
-//      float value = pow((noisefftFilter[i] + noisefftFilter[i+1])/2, 0.8);
-//      rect(((i-4)/2 + 0.5) * width / 17, 0, width / 17, (height - value * height/3) * scale - height / 5);
-//    }
-//  }
-  
-//  if (song.position() > 300000 && !noisePlaying) {
-//    noisePlaying = true;
-//    noise.loop();
-//  }
-  
+
   if (off) {
     fill(0, 0, 0);
     stroke(0, 0, 0);
