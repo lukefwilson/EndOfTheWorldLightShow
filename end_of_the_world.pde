@@ -22,7 +22,7 @@ void setup()
   size(450, 338);
   screen = new GraphicsProgram();
   
-  GRect rect = new GRect(0, 0, width*2, height*2);
+  GRect rect = new GRect(width/2, height/2, width, height);
   screen.addObject(rect);
   
   off = false;
@@ -80,6 +80,9 @@ void draw()
 //  image(im, x + imWidth, y, width, imHeight);
   
   screen.display();
+//  fill(200, 100, 100);
+//  rect(0, 0, width, height);
+//  
   
   fft.forward(in.mix);  
   for (int i = 0; i < fftFilter.length; i++) {
@@ -90,7 +93,7 @@ void draw()
   for (int i = 4; i < fftFilter.length; i+= 2) {
     if (i > 34) break;
 
-    fill(240, 240, 240);
+    fill(0, 240, 240);
     stroke(240, 240, 240);
     float value = pow((fftFilter[i] + fftFilter[i+1])/2, 0.75) * pow(60/(60-i), 0.4);
 
