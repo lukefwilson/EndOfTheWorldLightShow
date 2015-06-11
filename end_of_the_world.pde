@@ -94,7 +94,7 @@ void draw()
     stroke(240, 240, 240);
     float value = pow((fftFilter[i] + fftFilter[i+1])/2, 0.75) * pow(60/(60-i), 0.4);
 
-    rect(((i-4)/2 + 0.5) * width / 17, 0, width / 17, (height - value * height/2.5));
+    rect(((i-4)/2 + 0.5) * width / 17 + 10, 0, width / 17, (height - value * height/2.5));
   }
   
 
