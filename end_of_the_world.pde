@@ -8,24 +8,26 @@ FFT fft;
 float[] fftFilter;
 
 
-boolean noisePlaying;
 boolean off;
 
-String songFilename = "song.mp3";
-String noiseFilename = "noise.mp3";
 float decay = 0.97;
 
 // Luke
 AudioInput in;
+GraphicsProgram screen;
+
 
 void setup()
 {
   size(450, 338);
+  screen = new GraphicsProgram();
   
-  noisePlaying = false;
+  GRect rect = new GRect(0, 0, width*2, height*2);
+  screen.addObject(rect);
+  
   off = false;
   
-  im = loadImage("flames.png");
+//  im = loadImage("flames.png");
   
   minim = new Minim(this);
   
@@ -37,7 +39,7 @@ void setup()
   
 
   // Load a sample image
-  im = loadImage("flames.png");
+//  im = loadImage("flames.png");
 
   // Connect to the local instance of fcserver
   opc = new OPC(this, "127.0.0.1", 7890);
@@ -60,28 +62,24 @@ void setup()
   opc.ledStrip(15 * 30, 30, width * 16/17, height/2, height / 32, -PI/2, false);
 }
 
-void keyPressed()
-{
-
-}
-
-
 void draw()
 {
   
   // Scale the image so that it matches the width of the window
-  int imHeight = im.height * width / im.width;
-  int imWidth = im.width * height / im.height;
+//  int imHeight = im.height * width / im.width;
+//  int imWidth = im.width * height / im.height;
 
   // Scroll down slowly, and wrap around
-  float y = (millis() * -0.1) % imHeight;
-  float x = (millis() * -0.075) % imWidth;
+//  float y = (millis() * -0.1) % imHeight;
+//  float x = (millis() * -0.075) % imWidth;
   
   // Use two copies of the image, so it seems to repeat infinitely  
-  image(im, x, y, width, imHeight);
-  image(im, x + imWidth, y + imHeight, width, imHeight);
-  image(im, x, y + imHeight, width, imHeight);
-  image(im, x + imWidth, y, width, imHeight);
+//  image(im, x, y, width, imHeight);
+//  image(im, x + imWidth, y + imHeight, width, imHeight);
+//  image(im, x, y + imHeight, width, imHeight);
+//  image(im, x + imWidth, y, width, imHeight);
+  
+  screen.display();
   
   fft.forward(in.mix);  
   for (int i = 0; i < fftFilter.length; i++) {
@@ -91,13 +89,12 @@ void draw()
 
   for (int i = 4; i < fftFilter.length; i+= 2) {
     if (i > 34) break;
-    float scale = 0;
 
     fill(240, 240, 240);
     stroke(240, 240, 240);
     float value = pow((fftFilter[i] + fftFilter[i+1])/2, 0.75) * pow(60/(60-i), 0.4);
 
-      rect(((i-4)/2 + 0.5) * width / 17, 0, width / 17, (height - value * height/2.5) * (1-scale));
+    rect(((i-4)/2 + 0.5) * width / 17, 0, width / 17, (height - value * height/2.5));
   }
   
 
