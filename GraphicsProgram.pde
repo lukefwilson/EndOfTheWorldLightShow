@@ -1,6 +1,6 @@
 public class GraphicsProgram {
 
-  ArrayList<GObject> screenItems;
+  public ArrayList<GObject> screenItems;
 
   GraphicsProgram() {
     screenItems = new ArrayList<GObject>();
