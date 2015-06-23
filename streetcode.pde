@@ -134,7 +134,7 @@ void drawEncircleMode() {
   timeTillNext--;
   
   if (timeTillNext <= 0 && speed != 0) {
-    GRect rect = new GRect(10, height-20, 20, 20);
+    GRect rect = new GRect(10, height-20, 40, 20);
     rect.setXVel(5);
     screen3.addObject(rect);
     
@@ -194,7 +194,6 @@ void drawEQBarsMode() {
     noStroke();
     float value = pow((fftFilter[i] + fftFilter[i+1])/2, 0.75) * pow(60/(60-i), 0.4);
     
-    value += 0.5;
     
     rectMode(CORNER);
     rect(((i-4)/2 + 0.5) * width / 17, -30, width / 17, (height - value * height/2.5));
@@ -232,6 +231,10 @@ void keyPressed() {
 //  println(keyCode);
   if (keyCode == 45) { // - key
     altMode = !altMode;
+  } else if (keyCode == 8) {
+    screen1.screenItems.clear();
+    screen2.screenItems.clear();
+    screen3.screenItems.clear();
   } else if (keyCode == 16) { // shift key
     // strobe the lights (in draw loop)
   } else if (keyCode == 49) {// 1 key
