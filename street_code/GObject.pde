@@ -12,6 +12,7 @@ public class GObject {
   float strokeSize;
   float rotation;
   int zIndex;
+  public float data;
   
   boolean showBoundingBox;
   

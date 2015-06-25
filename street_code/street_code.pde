@@ -21,7 +21,8 @@ int mode = 1;
 boolean altMode = false;
 
 int timeTillNext = 0;
-float speed = 1;
+float spawnSpeed = 1;
+float moveSpeed = 1;
 color bgColor = color(255, 255, 255);
 
 void setup()
@@ -63,10 +64,11 @@ void drawDripMode() {
   background(0); 
   timeTillNext--; 
   
-  if (timeTillNext <= 0 && speed != 0) {
+  if (timeTillNext <= 0 && spawnSpeed > 0) {
     int num = round(random(1, 16));
     GRect drip = new GRect( width *  num/17, height, 20, 40);
-    drip.setYVel(-5);
+    if(moveSpeed < 0) drip.setY(-20);
+    drip.setYVel(-5 * moveSpeed);
     screen1.addObject(drip); 
     if (altMode) {
       colorMode(HSB, 255);
@@ -75,7 +77,7 @@ void drawDripMode() {
       colorMode(HSB, 255);
       drip.setFillColor(color(255, 0, 255));
     } 
-    timeTillNext = round(random(0, 30/speed));
+    timeTillNext = round(random(0, 30/spawnSpeed));
   }
   
   for (int i = screen1.screenItems.size()-1; i >= 0; i--) {
@@ -94,7 +96,7 @@ void drawSparkleMode() {
   background(0);  
   timeTillNext--;
   
-  if (timeTillNext <= 0 && speed != 0) {
+  if (timeTillNext <= 0 && spawnSpeed > 0) {
     int w = round(random(1, 16));
     int h = round(random(1, 30));
     GRect sparkle = new GRect( width *  w/17, height * h/30, 20, 20);
@@ -108,7 +110,7 @@ void drawSparkleMode() {
       sparkle.setFillColor(color(255, 0, 255, 255));
     }
     
-    timeTillNext = round(random(0, 8/speed));
+    timeTillNext = round(random(0, 8/spawnSpeed));
   }
   
   for (int i = screen2.screenItems.size()-1; i >= 0; i--) {
@@ -117,11 +119,10 @@ void drawSparkleMode() {
     float h = hue(c);
     float s = saturation(c);
     float b = brightness(c);
-    float a = alpha(c);
+    float a = alpha(c) - 5;
     if (a < 0) {
       screen2.screenItems.remove(i);
     } else {
-      a -= 5;
       obj.setFillColor(color(h, s, b, a));
     } 
   }
@@ -133,9 +134,9 @@ void drawEncircleMode() {
   background(0);  
   timeTillNext--;
   
-  if (timeTillNext <= 0 && speed != 0) {
+  if (timeTillNext <= 0 && spawnSpeed > 0) {
     GRect rect = new GRect(10, height-20, 40, 20);
-    rect.setXVel(5);
+    rect.setXVel(5 * moveSpeed);
     screen3.addObject(rect);
     
     if (altMode) {
@@ -146,7 +147,7 @@ void drawEncircleMode() {
       rect.setFillColor(color(255, 0, 255, 255));
     }
     
-    timeTillNext = round(random(100/speed, 200/speed));
+    timeTillNext = round(random(100/spawnSpeed, 200/spawnSpeed));
   }
   
   for (int i = screen3.screenItems.size()-1; i >= 0; i--) {
@@ -169,9 +170,12 @@ void drawEQBarsMode() {
   
   if (altMode) {
     float h = hue(bgColor);
-    h += 0.2 * speed;
+    h += 0.2 * moveSpeed;
     if (h > 255) {
       h = 0; 
+    }
+    if (h < 0) {
+      h = 255; 
     }
     bgColor = color(h, 255, 255);
   }
@@ -229,12 +233,14 @@ void draw()
 
 void keyPressed() {
 //  println(keyCode);
-  if (keyCode == 45) { // - key
+  if (keyCode == 192) { // tilde key
     altMode = !altMode;
+  } else if (keyCode == 79) { // o key
+    off = !off;
   } else if (keyCode == 8) {
-    screen1.screenItems.clear();
+//    screen1.screenItems.clear();
     screen2.screenItems.clear();
-    screen3.screenItems.clear();
+//    screen3.screenItems.clear();
   } else if (keyCode == 16) { // shift key
     // strobe the lights (in draw loop)
   } else if (keyCode == 49) {// 1 key
@@ -246,11 +252,18 @@ void keyPressed() {
   } else if (keyCode == 52) {// 4 key
     mode = 4;
   } else if (keyCode == 38) { // up key
-    speed += 0.5;
-    println("speed: " + speed);
+    spawnSpeed += 0.2;
+    println("spawnSpeed: " + spawnSpeed);
   } else if (keyCode == 40) { // down key
-    speed -= 0.5;
-    println("speed: " + speed);
+    spawnSpeed -= 0.2;
+    if (spawnSpeed < 0) spawnSpeed = 0;
+    println("spawnSpeed: " + spawnSpeed);
+  } else if (keyCode == 37) { // left key
+    moveSpeed -= 0.2;
+    println("moveSpeed: " + moveSpeed);
+  } else if (keyCode == 39) { // right key
+    moveSpeed += 0.2;
+    println("moveSpeed: " + moveSpeed);
   } else {
     switch (mode) {
       case 1:
