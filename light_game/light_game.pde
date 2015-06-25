@@ -3,6 +3,9 @@ OPC opc;
 GraphicsProgram screen = new GraphicsProgram();
 ArrayList<GameLight> lights = new ArrayList();
 
+GameTeam team1 = new GameTeam(1);
+GameTeam team2 = new GameTeam(2);
+
 void setup()
 {
   int lightSize = 20;
@@ -15,28 +18,26 @@ void setup()
     lights.add(light);
   }
   
-  lights.get(0).setTeam(1);
-  lights.get(1).setTeam(1);
-  lights.get(2).setTeam(1);
-  lights.get(3).setTeam(1);
+  team1.addLight(lights.get(0));
+  team1.addLight(lights.get(1));
+  team1.addLight(lights.get(2));
+  team1.addLight(lights.get(3));
   
-  lights.get(4).setTeam(2);
-  lights.get(5).setTeam(2);
-  lights.get(6).setTeam(2);
-  lights.get(7).setTeam(2);
-  lights.get(8).setTeam(2);
-  lights.get(9).setTeam(2);
-  lights.get(10).setTeam(2);
-  lights.get(11).setTeam(2);
+  team2.addLight(lights.get(4));
+  team2.addLight(lights.get(5));
+  team2.addLight(lights.get(6));
+  team2.addLight(lights.get(7));
+  team2.addLight(lights.get(8));
+  team2.addLight(lights.get(9));
+  team2.addLight(lights.get(10));
+  team2.addLight(lights.get(11));
   
-  lights.get(12).setTeam(1);
-  lights.get(13).setTeam(1);
-  lights.get(14).setTeam(1);
-  lights.get(15).setTeam(1);
+  team1.addLight(lights.get(12));
+  team1.addLight(lights.get(13));
+  team1.addLight(lights.get(14));
+  team1.addLight(lights.get(15));
   
-  lights.get(0).startCharging();
-  lights.get(5).startCharging();
-  lights.get(7).startCharging();
+//  lights.get(2).startCharging();
     
   // LED strip Setup
   opc = new OPC(this, "127.0.0.1", 7890);
@@ -70,10 +71,22 @@ void draw() {
     light.update(); 
   }
   
+  team1.update();
+  team2.update();
+  
   screen.display();
 }
 
 void keyPressed() {
-
+  if (keyCode == 32) {
+    hitLight(lights.get(0));
+  }
 }
 
+void hitLight(GameLight light) {
+  if (light.team == team1.id) {
+    team1.hitLight(light); 
+  } else {
+    team2.hitLight(light); 
+  }
+}

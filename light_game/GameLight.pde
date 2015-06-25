@@ -1,10 +1,10 @@
 public class GameLight extends LEDLightStrip {
   
   int team = 0;
-  int timeTillNext = 0;
+  float timeTillNext = 0;
   boolean charging = false;
   int charge = 0;
-  int speed = 1;
+  float speed = 1;
   int mode = 0;
   
   color lightColor;
@@ -14,7 +14,7 @@ public class GameLight extends LEDLightStrip {
     super(initX, initY, initWidth, initHeight, initScreen);
   }
     
-  private void updateTimeTillNext() {
+  private void setTimeTillNext() {
      timeTillNext = 5 / speed;
   }
     
@@ -26,19 +26,27 @@ public class GameLight extends LEDLightStrip {
       
       if (charge > 30) {
         charge = 0; 
-        colorFullLight(color(0));
+        clearLight();
+        charging = false;
       } else {
         setLightColor(30 - charge, lightColor);      
       }
       
-      updateTimeTillNext();
+      setTimeTillNext();
     }
   }
   
   public void startCharging() {
      charge = 0;
+     clearLight();
      charging = true;
-     updateTimeTillNext();
+     setTimeTillNext();
+  }
+  
+  public void hit() {
+    charge = 0;
+    charging = false;
+    clearLight();
   }
   
   public void setTeam(int newTeam) {
@@ -51,6 +59,10 @@ public class GameLight extends LEDLightStrip {
       teamColor = color(0, 0, 255); 
       lightColor = teamColor;
     } 
+  }
+  
+  public void clearLight() {
+    colorFullLight(color(0)); 
   }
   
   public void colorFullLight(color newColor) {
