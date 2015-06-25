@@ -3,11 +3,6 @@ OPC opc;
 GraphicsProgram screen = new GraphicsProgram();
 ArrayList<GameLight> lights = new ArrayList();
 
-//ArrayList<GameLight> team1Lights = new ArrayList();
-//ArrayList<GameLight> team2Lights = new ArrayList();
-
-//GRect player = new GRect(10, 10, 20, 20);
-
 void setup()
 {
   int lightSize = 20;
@@ -16,7 +11,7 @@ void setup()
   size(numStrips * lightSize, lightsPerStrip * lightSize);  
   
   for (int i = 0; i < numStrips; i++) {
-    GameLight light = new GameLight((lightSize/2) + (i * lightSize), lightSize/2, lightSize, lightSize, screen, 0);
+    GameLight light = new GameLight((lightSize/2) + (i * lightSize), lightSize/2, lightSize, lightSize, screen);
     lights.add(light);
   }
   
@@ -39,8 +34,10 @@ void setup()
   lights.get(14).setTeam(1);
   lights.get(15).setTeam(1);
   
-//  screen.addObject(player);
-  
+  lights.get(0).startCharging();
+  lights.get(5).startCharging();
+  lights.get(7).startCharging();
+    
   // LED strip Setup
   opc = new OPC(this, "127.0.0.1", 7890);
 
@@ -69,24 +66,14 @@ void setup()
 void draw() {
   background(0);
   
+  for (GameLight light : lights) {
+    light.update(); 
+  }
+  
   screen.display();
 }
 
 void keyPressed() {
-  GameLight light = lights.get(0);
-  light.setLightColor(0, color(255, 0, 0));
-  
-//  if (keyCode == UP) {
-//    player.moveBy(0, -20);
-//  }
-//  if (keyCode == RIGHT) {
-//    player.moveBy(20, 0);
-//  }
-//  if (keyCode == DOWN) {
-//    player.moveBy(0, 20);
-//  }
-//  if (keyCode == LEFT) {
-//    player.moveBy(-20, 0);
-//  }
+
 }
 
