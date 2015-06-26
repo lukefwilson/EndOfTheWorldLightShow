@@ -14,9 +14,9 @@ float roundTime = 10 * 60;
 float roundTimer = roundTime;
 
 float roundWaitTime = 10 * 60;
-float nextRoundTimer = roundWaitTime;
+float roundWaitTimer = roundWaitTime;
 
-float startRoundTime = 3 * 60;
+float startRoundTime = 4 * 60;
 float startRoundTimer = startRoundTime;
 
 boolean paused = false;
@@ -42,24 +42,30 @@ void setup()
     lights.add(light);
   }
   
+  // Order matters!
   team1.addLight(lights.get(0));
+  team1.addLight(lights.get(14));
   team1.addLight(lights.get(1));
+  team1.addLight(lights.get(15));
   team1.addLight(lights.get(2));
+  team1.addLight(lights.get(13));
   team1.addLight(lights.get(3));
+  team1.addLight(lights.get(12));
   
-  team2.addLight(lights.get(4));
-  team2.addLight(lights.get(5));
-  team2.addLight(lights.get(6));
+  
+
   team2.addLight(lights.get(7));
   team2.addLight(lights.get(8));
+  team2.addLight(lights.get(6));
   team2.addLight(lights.get(9));
+  team2.addLight(lights.get(5));
   team2.addLight(lights.get(10));
+  team2.addLight(lights.get(4));
   team2.addLight(lights.get(11));
+
+
+
   
-  team1.addLight(lights.get(12));
-  team1.addLight(lights.get(13));
-  team1.addLight(lights.get(14));
-  team1.addLight(lights.get(15));
       
   // LED strip Setup
   opc = new OPC(this, "127.0.0.1", 7890);
@@ -113,7 +119,6 @@ void drawGameStats() {
   fill(team2.teamColor);
   text("Team 2", centerX, 400); 
   text("Score: " + team2.score, centerX, 440); 
-
 }
 
 
@@ -153,9 +158,19 @@ void draw() {
     drawGameStats();
   } else if (gameMode == roundWinnerMode) {
     int centerX = 510;
-    nextRoundTimer--;
+    if (team1.lights.size() == 0 || team2.lights.size() == 0) {
+      fill(winningTeam.teamColor);
+      rectMode(CORNER);
+      rect(0, 0, 20 * 16, height);
+      
+      text("Team " + winningTeam.id + " won the game in " + round + " rounds", centerX, 100); 
+
+      return;
+    }
     
-    if (round(nextRoundTimer/60)% 2 == 0) {
+    roundWaitTimer--;
+    
+    if (round(roundWaitTimer/60)% 2 == 0) {
       fill(winningTeam.teamColor);
     } else {
       fill(0);
@@ -169,13 +184,13 @@ void draw() {
     fill(255);
     text("Team " + winningTeam.id + " won Round " + round, centerX, 100); 
     
-    if (nextRoundTimer < 7 * 60) {
+    if (roundWaitTimer < 7 * 60) {
       fill(50, 150, 255);
       text("Relax a bit...", centerX, 140);
     } 
     
     
-    if (nextRoundTimer <= 0) {
+    if (roundWaitTimer <= 0) {
        countDownNextRound(); 
     }
   } else if (gameMode == startingRoundMode) {
@@ -186,6 +201,12 @@ void draw() {
     fill(255);
     text("Starting Round " + (round+1) + " in... " + round(startRoundTimer/60), centerX, 100); 
 
+    screen.display();
+    
+    int lightIndex = floor(startRoundTimer/15);
+    GameLight light = lights.get(lightIndex);
+    light.colorFullLight(light.team.teamColor);
+
     if (startRoundTimer <= 0) {
       startNextRound();
     }
@@ -194,22 +215,28 @@ void draw() {
 
 void declareWinners() {
   gameMode = roundWinnerMode;
+  roundWaitTimer = roundWaitTime;
   
   if (team1.score > team2.score) {
     winningTeam = team1; 
     team1.wins++;
+    GameLight light1 = team2.removeNextLight();
+    GameLight light2 = team2.removeNextLight();
+    team1.addLight(light1);
+    team1.addLight(light2);
   } else if (team2.score > team1.score) {
     winningTeam = team2;
     team2.wins++;
+    GameLight light1 = team1.removeNextLight();
+    GameLight light2 = team1.removeNextLight();
+    team2.addLight(light1);
+    team2.addLight(light2);
   } else { // draw
     gameMode = playMode;
     roundTimer = 10 * 60;
     overtime = true;
     return;
   }
-  
-  team1.nextRound();
-  team2.nextRound();
 }
 
 void countDownNextRound() {
@@ -219,6 +246,8 @@ void countDownNextRound() {
 }
 
 void startNextRound() {
+  team1.nextRound();
+  team2.nextRound();
   round++; 
   roundTimer = roundTime;
   overtime = false;
@@ -232,40 +261,44 @@ void keyPressed() {
   println(keyCode);
   if (keyCode == 32 && gameMode == menuMode) { // Space bar
     countDownNextRound();
-  } else if (keyCode == 80) { // P for pause
-    paused = !paused;
-  } else if (keyCode == 10) { // don't know
-    hitLight(lights.get(0));
-  } else if (keyCode == 81) { // Q
-    hitLight(lights.get(1));
-  } else if (keyCode == 87) { // W
-    hitLight(lights.get(2)); 
-  } else if (keyCode == 69) { // E
-    hitLight(lights.get(3));
-  } else if (keyCode == 82) { // R
-    hitLight(lights.get(4));
-  } else if (keyCode == 65) { // A 
-    hitLight(lights.get(5));
-  } else if (keyCode == 83) { // S
-    hitLight(lights.get(6));
-  } else if (keyCode == 68) { // D
-    hitLight(lights.get(7));
-  } else if (keyCode == UP) { 
-    hitLight(lights.get(8));
-  } else if (keyCode == RIGHT) { 
-    hitLight(lights.get(9));
-  } else if (keyCode == DOWN) { 
-    hitLight(lights.get(10));
-  } else if (keyCode == LEFT) { 
-    hitLight(lights.get(11));
-  } else if (keyCode == 81) { 
-    hitLight(lights.get(12));
-  } else if (keyCode == 81) { 
-    hitLight(lights.get(13));
-  } else if (keyCode == 81) { 
-    hitLight(lights.get(14));
-  } else if (keyCode == 81) { 
-    hitLight(lights.get(15));
+  }
+  
+  if (gameMode == playMode) {
+    if (keyCode == 80) { // P for pause
+      paused = !paused;
+    } else if (keyCode == 10) { // don't know
+      hitLight(lights.get(0));
+    } else if (keyCode == 81) { // Q
+      hitLight(lights.get(1));
+    } else if (keyCode == 87) { // W
+      hitLight(lights.get(2)); 
+    } else if (keyCode == 69) { // E
+      hitLight(lights.get(3));
+    } else if (keyCode == 82) { // R
+      hitLight(lights.get(4));
+    } else if (keyCode == 65) { // A 
+      hitLight(lights.get(5));
+    } else if (keyCode == 83) { // S
+      hitLight(lights.get(6));
+    } else if (keyCode == 68) { // D
+      hitLight(lights.get(7));
+    } else if (keyCode == UP) { 
+      hitLight(lights.get(8));
+    } else if (keyCode == RIGHT) { 
+      hitLight(lights.get(9));
+    } else if (keyCode == DOWN) { 
+      hitLight(lights.get(10));
+    } else if (keyCode == LEFT) { 
+      hitLight(lights.get(11));
+    } else if (keyCode == 81) { 
+      hitLight(lights.get(12));
+    } else if (keyCode == 81) { 
+      hitLight(lights.get(13));
+    } else if (keyCode == 81) { 
+      hitLight(lights.get(14));
+    } else if (keyCode == 81) { 
+      hitLight(lights.get(15));
+    }
   }
 }
 

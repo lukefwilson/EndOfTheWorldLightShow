@@ -66,11 +66,25 @@ public class GameTeam {
     lights.remove(light); 
   }
   
+  public GameLight removeNextLight() {
+    GameLight light = lights.get(lights.size()-1);
+    lights.remove(light);
+    return light; 
+  }
+  
   public void reset() {
     score = 0; 
     speed = 1 + round * 0.1;
+    
+    if (lights.size() == 2) {
+      speed += 0.8; 
+    }
+    
     for (GameLight light : lights) {
       light.resetCharge();
+      if (lights.size() == 2) {
+        light.speed += 0.8; 
+      }
     }
   }
   
