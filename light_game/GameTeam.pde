@@ -3,6 +3,8 @@ public class GameTeam {
   int score;
   float speed = 1;
   float timeTillNext = 0;
+  int round = 0;
+  int wins = 0;
   
   color teamColor;
   
@@ -26,6 +28,14 @@ public class GameTeam {
     }
     if (count >= 10) return -1;
     return random;
+  }
+  
+  public int numChargingLights() {
+    int count = 0;
+    for (GameLight light : lights) {
+      if (light.charging) count++;
+    } 
+    return count;
   }
     
   
@@ -54,6 +64,19 @@ public class GameTeam {
   
   public void removeLight(GameLight light) {
     lights.remove(light); 
+  }
+  
+  public void reset() {
+    score = 0; 
+    speed = 1 + round * 0.1;
+    for (GameLight light : lights) {
+      light.resetCharge();
+    }
+  }
+  
+  public void nextRound() {
+    round++;
+    reset();
   }
   
   public void hitLight(GameLight light) {

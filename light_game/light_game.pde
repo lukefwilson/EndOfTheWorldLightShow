@@ -1,20 +1,41 @@
 OPC opc;
 
 GraphicsProgram screen = new GraphicsProgram();
+
 ArrayList<GameLight> lights = new ArrayList();
 
 GameTeam team1 = new GameTeam(1, color(255, 0, 0));
 GameTeam team2 = new GameTeam(2, color(0, 0, 255));
 
+GameTeam winningTeam;
+
+int round = 0;
+float roundTime = 10 * 60;
+float roundTimer = roundTime;
+
+float roundWaitTime = 10 * 60;
+float nextRoundTimer = roundWaitTime;
+
+float startRoundTime = 3 * 60;
+float startRoundTimer = startRoundTime;
+
+boolean paused = false;
+boolean overtime = false;
+static final int menuMode = 0;
+static final int playMode = 1;
+static final int roundWinnerMode = 2;
+static final int startingRoundMode = 3;
+static int gameMode = menuMode;
+
 void setup()
-{
+{ 
   int lightSize = 20;
   int numStrips = 16;
   int lightsPerStrip = 30;
   
   int totalLEDWidth =  numStrips * lightSize;
   int totalLEDHeight = lightsPerStrip * lightSize;
-  size(totalLEDWidth + 200, totalLEDHeight);  
+  size(totalLEDWidth + 400, totalLEDHeight);  
   
   for (int i = 0; i < numStrips; i++) {
     GameLight light = new GameLight((lightSize/2) + (i * lightSize), lightSize/2, lightSize, lightSize, screen);
@@ -46,8 +67,6 @@ void setup()
   int LEDHeight = 30;
   int LEDWidth = 16;
   
-  // int index, int count, float x, float y, float spacing, float angle, boolean reversed
-
   float ledStripY = totalLEDHeight/2;
   float ledStripYSpacing = totalLEDHeight/lightsPerStrip;
   
@@ -57,30 +76,165 @@ void setup()
 
 }
 
-void drawGameStats() {
-  fill(team1.teamColor);
-  text("Team 1", 100, 100); 
+void drawMenu() {
+  int centerX = 510;
+  
+  textAlign(CENTER);
+  textSize(20);
+  
+  fill(255);
+  text("Game Name!", centerX, 100); 
+  
+  textSize(16);
+  text("Press spacebar to start", centerX, 160); 
+
+
 }
+
+void drawGameStats() {
+  int centerX = 510;
+  
+  textAlign(CENTER);
+  
+  if (overtime) {
+    textSize(29);
+    fill(100, 200, 0);
+    text("Overtime!", centerX, 140);
+  }
+  
+  textSize(20);
+  fill(255);
+  text("Round " + round + "   -   " + round(roundTimer/60), centerX, 100); 
+  
+  fill(team1.teamColor);
+  text("Team 1", centerX, 300); 
+  text("Score: " + team1.score, centerX, 340); 
+  
+  fill(team2.teamColor);
+  text("Team 2", centerX, 400); 
+  text("Score: " + team2.score, centerX, 440); 
+
+}
+
 
 void draw() {
   background(0);
   
+  if (paused) {
+    screen.display();
+    
+    int centerX = 510;
+    fill(255);
+    text("Paused", centerX, 100); 
+  } else if (gameMode == menuMode) {
+    drawMenu();
+  } else if (gameMode == playMode) {
+    roundTimer--;
+    
+    if (roundTimer < 0) {
+      roundTimer = -1;
+      if (team1.numChargingLights() == 0 && team2.numChargingLights() == 0) {
+        // wait until all lights stop spawning then
+        declareWinners();
+      }
+    } else {
+      
+      team1.update();
+      team2.update();
+    }
+    
+    for (GameLight light : lights) {
+        light.update(); 
+    }
+    
+    screen.display();
+    
+    
+    drawGameStats();
+  } else if (gameMode == roundWinnerMode) {
+    int centerX = 510;
+    nextRoundTimer--;
+    
+    if (round(nextRoundTimer/60)% 2 == 0) {
+      fill(winningTeam.teamColor);
+    } else {
+      fill(0);
+    }
+       
+    rectMode(CORNER);
+    rect(0, 0, 20 * 16, height);
+    
+           
+    textSize(20);
+    fill(255);
+    text("Team " + winningTeam.id + " won Round " + round, centerX, 100); 
+    
+    if (nextRoundTimer < 7 * 60) {
+      fill(50, 150, 255);
+      text("Relax a bit...", centerX, 140);
+    } 
+    
+    
+    if (nextRoundTimer <= 0) {
+       countDownNextRound(); 
+    }
+  } else if (gameMode == startingRoundMode) {
+    startRoundTimer--;
+      
+    int centerX = 510;
+    textSize(20);
+    fill(255);
+    text("Starting Round " + (round+1) + " in... " + round(startRoundTimer/60), centerX, 100); 
+
+    if (startRoundTimer <= 0) {
+      startNextRound();
+    }
+  }
+}
+
+void declareWinners() {
+  gameMode = roundWinnerMode;
   
-  for (GameLight light : lights) {
-    light.update(); 
+  if (team1.score > team2.score) {
+    winningTeam = team1; 
+    team1.wins++;
+  } else if (team2.score > team1.score) {
+    winningTeam = team2;
+    team2.wins++;
+  } else { // draw
+    gameMode = playMode;
+    roundTimer = 10 * 60;
+    overtime = true;
+    return;
   }
   
-  team1.update();
-  team2.update();
+  team1.nextRound();
+  team2.nextRound();
+}
+
+void countDownNextRound() {
+  gameMode = startingRoundMode;
   
-  screen.display();
+  startRoundTimer = startRoundTime;
+}
+
+void startNextRound() {
+  round++; 
+  roundTimer = roundTime;
+  overtime = false;
   
-  drawGameStats();
+  gameMode = playMode;
+  team1.score = 0;
+  team2.score = 0;
 }
 
 void keyPressed() {
-//  println(keyCode);
-  if (keyCode == 32) { // Space bar
+  println(keyCode);
+  if (keyCode == 32 && gameMode == menuMode) { // Space bar
+    countDownNextRound();
+  } else if (keyCode == 80) { // P for pause
+    paused = !paused;
+  } else if (keyCode == 10) { // don't know
     hitLight(lights.get(0));
   } else if (keyCode == 81) { // Q
     hitLight(lights.get(1));

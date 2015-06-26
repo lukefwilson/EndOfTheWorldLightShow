@@ -48,7 +48,14 @@ public class GameLight extends LEDLightStrip {
     clearLight();
   }
   
+  public void resetCharge() {
+    charge = 0;
+    charging = false;
+    clearLight();
+  }
+  
   public void clearLight() {
+    
     colorFullLight(color(0)); 
   }
   
