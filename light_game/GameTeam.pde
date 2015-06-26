@@ -4,14 +4,17 @@ public class GameTeam {
   float speed = 1;
   float timeTillNext = 0;
   
+  color teamColor;
+  
   ArrayList<GameLight> lights = new ArrayList<GameLight>();
   
-  GameTeam(int initTeamNumber) {
+  GameTeam(int initTeamNumber, color initTeamColor) {
     id = initTeamNumber;
+    teamColor = initTeamColor;
   }
   
   private void setTimeTillNext() {
-     timeTillNext = random(40, 60) / speed;
+     timeTillNext = random(100, 120) / speed;
   }
   
   private int getRandomLightIndex() {
@@ -40,12 +43,13 @@ public class GameTeam {
       setTimeTillNext();
     }
     
-    speed += 0.001;
+    speed += 0.0005;
   }
   
   public void addLight(GameLight light) {
     lights.add(light); 
-    light.setTeam(id);
+    light.setTeam(this);
+    light.setMode(0);
   }
   
   public void removeLight(GameLight light) {

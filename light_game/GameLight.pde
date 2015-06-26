@@ -1,6 +1,5 @@
 public class GameLight extends LEDLightStrip {
   
-  int team = 0;
   float timeTillNext = 0;
   boolean charging = false;
   int charge = 0;
@@ -8,7 +7,7 @@ public class GameLight extends LEDLightStrip {
   int mode = 0;
   
   color lightColor;
-  color teamColor;
+  GameTeam team;
   
   GameLight(int initX, int initY, int initWidth, int initHeight, GraphicsProgram initScreen) {
     super(initX, initY, initWidth, initHeight, initScreen);
@@ -49,18 +48,6 @@ public class GameLight extends LEDLightStrip {
     clearLight();
   }
   
-  public void setTeam(int newTeam) {
-    team = newTeam;
-    
-    if (team == 1) {
-      teamColor = color(255, 0, 0);
-      lightColor = teamColor;
-    } else if (team == 2) {
-      teamColor = color(0, 0, 255); 
-      lightColor = teamColor;
-    } 
-  }
-  
   public void clearLight() {
     colorFullLight(color(0)); 
   }
@@ -71,11 +58,15 @@ public class GameLight extends LEDLightStrip {
     }
   }
   
+  public void setTeam(GameTeam newTeam) {
+    team = newTeam;
+  }
+  
   public void setMode(int initMode) {
     mode = initMode;
     switch (mode) {
       case 0: 
-        lightColor = teamColor;
+        lightColor = team.teamColor;
         break; 
       case 1:
         // change lightColor

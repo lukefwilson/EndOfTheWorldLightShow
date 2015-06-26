@@ -3,15 +3,18 @@ OPC opc;
 GraphicsProgram screen = new GraphicsProgram();
 ArrayList<GameLight> lights = new ArrayList();
 
-GameTeam team1 = new GameTeam(1);
-GameTeam team2 = new GameTeam(2);
+GameTeam team1 = new GameTeam(1, color(255, 0, 0));
+GameTeam team2 = new GameTeam(2, color(0, 0, 255));
 
 void setup()
 {
   int lightSize = 20;
   int numStrips = 16;
   int lightsPerStrip = 30;
-  size(numStrips * lightSize, lightsPerStrip * lightSize);  
+  
+  int totalLEDWidth =  numStrips * lightSize;
+  int totalLEDHeight = lightsPerStrip * lightSize;
+  size(totalLEDWidth + 200, totalLEDHeight);  
   
   for (int i = 0; i < numStrips; i++) {
     GameLight light = new GameLight((lightSize/2) + (i * lightSize), lightSize/2, lightSize, lightSize, screen);
@@ -36,36 +39,32 @@ void setup()
   team1.addLight(lights.get(13));
   team1.addLight(lights.get(14));
   team1.addLight(lights.get(15));
-  
-//  lights.get(2).startCharging();
-    
+      
   // LED strip Setup
   opc = new OPC(this, "127.0.0.1", 7890);
 
   int LEDHeight = 30;
   int LEDWidth = 16;
+  
+  // int index, int count, float x, float y, float spacing, float angle, boolean reversed
 
-  opc.ledStrip( 0 * 30, 30, width *  1/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 1 * 30, 30, width *  2/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 2 * 30, 30, width *  3/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 3 * 30, 30, width *  4/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 4 * 30, 30, width *  5/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 5 * 30, 30, width *  6/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 6 * 30, 30, width *  7/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 7 * 30, 30, width *  8/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 8 * 30, 30, width *  9/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip( 9 * 30, 30, width * 10/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip(10 * 30, 30, width * 11/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip(11 * 30, 30, width * 12/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip(12 * 30, 30, width * 13/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip(13 * 30, 30, width * 14/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip(14 * 30, 30, width * 15/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
-  opc.ledStrip(15 * 30, 30, width * 16/LEDWidth + (LEDWidth/2), height/2, height / LEDHeight, -PI/2, false);
+  float ledStripY = totalLEDHeight/2;
+  float ledStripYSpacing = totalLEDHeight/lightsPerStrip;
+  
+  for (int i = 0; i < 16; i++) {
+    opc.ledStrip( i * 30, 30, lightSize * i + (LEDWidth/2), ledStripY, ledStripYSpacing, -PI/2, false);
+  }
+
 }
 
+void drawGameStats() {
+  fill(team1.teamColor);
+  text("Team 1", 100, 100); 
+}
 
 void draw() {
   background(0);
+  
   
   for (GameLight light : lights) {
     light.update(); 
@@ -75,16 +74,49 @@ void draw() {
   team2.update();
   
   screen.display();
+  
+  drawGameStats();
 }
 
 void keyPressed() {
-  if (keyCode == 32) {
+//  println(keyCode);
+  if (keyCode == 32) { // Space bar
     hitLight(lights.get(0));
+  } else if (keyCode == 81) { // Q
+    hitLight(lights.get(1));
+  } else if (keyCode == 87) { // W
+    hitLight(lights.get(2)); 
+  } else if (keyCode == 69) { // E
+    hitLight(lights.get(3));
+  } else if (keyCode == 82) { // R
+    hitLight(lights.get(4));
+  } else if (keyCode == 65) { // A 
+    hitLight(lights.get(5));
+  } else if (keyCode == 83) { // S
+    hitLight(lights.get(6));
+  } else if (keyCode == 68) { // D
+    hitLight(lights.get(7));
+  } else if (keyCode == UP) { 
+    hitLight(lights.get(8));
+  } else if (keyCode == RIGHT) { 
+    hitLight(lights.get(9));
+  } else if (keyCode == DOWN) { 
+    hitLight(lights.get(10));
+  } else if (keyCode == LEFT) { 
+    hitLight(lights.get(11));
+  } else if (keyCode == 81) { 
+    hitLight(lights.get(12));
+  } else if (keyCode == 81) { 
+    hitLight(lights.get(13));
+  } else if (keyCode == 81) { 
+    hitLight(lights.get(14));
+  } else if (keyCode == 81) { 
+    hitLight(lights.get(15));
   }
 }
 
 void hitLight(GameLight light) {
-  if (light.team == team1.id) {
+  if (light.team.id == team1.id) {
     team1.hitLight(light); 
   } else {
     team2.hitLight(light); 
