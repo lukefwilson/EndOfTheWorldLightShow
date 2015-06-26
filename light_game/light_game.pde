@@ -10,7 +10,7 @@ GameTeam team2 = new GameTeam(2, color(0, 0, 255));
 GameTeam winningTeam;
 
 int round = 0;
-float roundTime = 10 * 60;
+float roundTime = 45 * 60;
 float roundTimer = roundTime;
 
 float roundWaitTime = 10 * 60;
@@ -143,7 +143,6 @@ void draw() {
         declareWinners();
       }
     } else {
-      
       team1.update();
       team2.update();
     }
@@ -266,40 +265,53 @@ void keyPressed() {
   if (gameMode == playMode) {
     if (keyCode == 80) { // P for pause
       paused = !paused;
-    } else if (keyCode == 10) { // don't know
-      hitLight(lights.get(0));
-    } else if (keyCode == 81) { // Q
-      hitLight(lights.get(1));
-    } else if (keyCode == 87) { // W
-      hitLight(lights.get(2)); 
-    } else if (keyCode == 69) { // E
-      hitLight(lights.get(3));
-    } else if (keyCode == 82) { // R
-      hitLight(lights.get(4));
-    } else if (keyCode == 65) { // A 
-      hitLight(lights.get(5));
-    } else if (keyCode == 83) { // S
-      hitLight(lights.get(6));
-    } else if (keyCode == 68) { // D
-      hitLight(lights.get(7));
-    } else if (keyCode == UP) { 
-      hitLight(lights.get(8));
-    } else if (keyCode == RIGHT) { 
+    } else if (keyCode == LEFT) {
       hitLight(lights.get(9));
-    } else if (keyCode == DOWN) { 
-      hitLight(lights.get(10));
-    } else if (keyCode == LEFT) { 
-      hitLight(lights.get(11));
-    } else if (keyCode == 81) { 
-      hitLight(lights.get(12));
-    } else if (keyCode == 81) { 
-      hitLight(lights.get(13));
-    } else if (keyCode == 81) { 
-      hitLight(lights.get(14));
-    } else if (keyCode == 81) { 
+    } else if (keyCode == UP) {
+      hitLight(lights.get(8));
+    } else if (keyCode == RIGHT) {
+      hitLight(lights.get(7));
+    } else if (keyCode == DOWN) {
+      hitLight(lights.get(6));
+    } else if (keyCode == 32) { // SPACE 
+      hitLight(lights.get(5));
+    } else if (keyCode == 87) { // W 
+      // light 4 handled in mouse click
+      hitLight(lights.get(3));
+    } else if (keyCode == 65) { // A 
+      hitLight(lights.get(2));
+    } else if (keyCode == 83) { // S
+      hitLight(lights.get(1));
+    } else if (keyCode == 70) { // F
+      hitLight(lights.get(0));
+    } else if (keyCode == 68) { // D
       hitLight(lights.get(15));
+    } else if (keyCode == 71) { // G
+      hitLight(lights.get(14));
     }
   }
+}
+
+void mousePressed() {
+  if (mouseButton == LEFT) {
+    hitLight(lights.get(4));
+  } else if (mouseButton == RIGHT) {
+    hitLight(lights.get(13));
+  }
+}
+
+void mouseMoved() {
+  int xDiff = mouseX - pmouseX; 
+  int yDiff = mouseY - pmouseY;
+  
+  if (yDiff > 0) { // move down
+    hitLight(lights.get(11));
+  } else if (yDiff < 0) { // move up
+    hitLight(lights.get(12));
+  } else if (xDiff > 0) { // move right
+    hitLight(lights.get(10));
+  }
+  
 }
 
 void hitLight(GameLight light) {
