@@ -4,7 +4,15 @@ public class GameLight extends LEDLightStrip {
   boolean charging = false;
   int charge = 0;
   float speed = 1;
-  int mode = 0;
+  
+  int regularMode = 0;
+  int successHitMode = 1;
+  int missHitMode = 2;
+
+  int mode = regularMode;
+  
+  float feedbackTime = 1 * 30;
+  float feedbackTimer = feedbackTime;
   
   color lightColor;
   GameTeam team;
@@ -18,20 +26,34 @@ public class GameLight extends LEDLightStrip {
   }
     
   public void update() {
-    timeTillNext--;
-    
-    if (timeTillNext <= 0 && charging) {  
-      charge++;
+    if (mode == regularMode) {
+      timeTillNext--;
       
-      if (charge > 30) {
-        charge = 0; 
-        clearLight();
-        charging = false;
+      if (timeTillNext <= 0 && charging) {  
+        charge++;
+        
+        if (charge > 30) {
+          charge = 0; 
+          clearLight();
+          charging = false;
+        } else {
+          setLightColor(30 - charge, lightColor);      
+        }
+        
+        setTimeTillNext();
+      }
+    } else if (mode == successHitMode) {
+      feedbackTimer--;
+      
+      if (round(feedbackTimer/20) % 2 == 0) {
+        colorFullLight(color(0, 255, 0)); 
       } else {
-        setLightColor(30 - charge, lightColor);      
+        clearLight(); 
       }
       
-      setTimeTillNext();
+      if (feedbackTimer <= 0) {
+        readyToCharge(); 
+      }
     }
   }
   
@@ -42,9 +64,20 @@ public class GameLight extends LEDLightStrip {
      setTimeTillNext();
   }
   
-  public void hit() {
+  public boolean hit() {
+    if (charge > 27) {
+      mode = successHitMode;
+      feedbackTimer = feedbackTime;
+      return true;
+    } else {
+      readyToCharge();
+      return false;
+    }
+  }
+  
+  public void readyToCharge() {
     charge = 0;
-    charging = false;
+    charging = false; 
     clearLight();
   }
   

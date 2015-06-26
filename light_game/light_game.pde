@@ -42,30 +42,25 @@ void setup()
     lights.add(light);
   }
   
-  // Order matters!
-  team1.addLight(lights.get(0));
+ // Order matters!
   team1.addLight(lights.get(14));
-  team1.addLight(lights.get(1));
-  team1.addLight(lights.get(15));
-  team1.addLight(lights.get(2));
   team1.addLight(lights.get(13));
-  team1.addLight(lights.get(3));
+  team1.addLight(lights.get(15));
   team1.addLight(lights.get(12));
-  
-  
+  team1.addLight(lights.get(0));
+  team1.addLight(lights.get(11));
+  team1.addLight(lights.get(1));
+  team1.addLight(lights.get(10));
 
-  team2.addLight(lights.get(7));
-  team2.addLight(lights.get(8));
-  team2.addLight(lights.get(6));
-  team2.addLight(lights.get(9));
+  
   team2.addLight(lights.get(5));
-  team2.addLight(lights.get(10));
+  team2.addLight(lights.get(6));
   team2.addLight(lights.get(4));
-  team2.addLight(lights.get(11));
-
-
-
-  
+  team2.addLight(lights.get(7));
+  team2.addLight(lights.get(3));
+  team2.addLight(lights.get(8));
+  team2.addLight(lights.get(2));
+  team2.addLight(lights.get(9));
       
   // LED strip Setup
   opc = new OPC(this, "127.0.0.1", 7890);
@@ -125,8 +120,13 @@ void drawGameStats() {
 void draw() {
   background(0);
   
-  if (paused) {
-    screen.display();
+  if (paused) {    
+    for (int i = 0; i < 16; i++) {
+      GameLight light = lights.get(i);
+      light.colorFullLight(light.team.teamColor);
+    }
+    
+    screen.display();  
     
     int centerX = 510;
     fill(255);

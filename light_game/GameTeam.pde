@@ -94,14 +94,14 @@ public class GameTeam {
   }
   
   public void hitLight(GameLight light) {
-    if (light.charge > 27) {
+    boolean hit = light.hit();
+    
+    if (hit) {
       println("success"); 
       score += 1;
     } else {
       println("woops!"); 
     }
-    
-    light.hit();
   }
     
 }
