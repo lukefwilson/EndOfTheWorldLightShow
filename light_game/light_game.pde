@@ -6,11 +6,11 @@ ArrayList<GameLight> lights = new ArrayList();
 
 GameTeam team1 = new GameTeam(1, color(255, 0, 0));
 GameTeam team2 = new GameTeam(2, color(0, 0, 255));
-
+               
 GameTeam winningTeam;
 
-int round = 0;
-float roundTime = 45 * 60;
+int round = 0       ;                                                                                      
+float roundTime = 60 * 60;
 float roundTimer = roundTime;
 
 float roundWaitTime = 10 * 60;
@@ -148,7 +148,7 @@ void draw() {
     }
     
     for (GameLight light : lights) {
-        light.update(); 
+      light.update(); 
     }
     
     screen.display();
@@ -234,7 +234,6 @@ void declareWinners() {
     gameMode = playMode;
     roundTimer = 10 * 60;
     overtime = true;
-    return;
   }
 }
 
@@ -252,8 +251,6 @@ void startNextRound() {
   overtime = false;
   
   gameMode = playMode;
-  team1.score = 0;
-  team2.score = 0;
 }
 
 void keyPressed() {

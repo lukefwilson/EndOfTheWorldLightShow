@@ -67,7 +67,7 @@ public class GameLight extends LEDLightStrip {
   public boolean hit() {
 //    colorFullLight(color(255));
 //    return false;
-    if (charge > 27) {
+    if (charge > 0) {
       mode = successHitMode;
       feedbackTimer = feedbackTime;
       return true;
@@ -90,7 +90,6 @@ public class GameLight extends LEDLightStrip {
   }
   
   public void clearLight() {
-    
     colorFullLight(color(0)); 
   }
   

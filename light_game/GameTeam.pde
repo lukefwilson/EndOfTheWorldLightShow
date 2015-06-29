@@ -82,7 +82,7 @@ public class GameTeam {
     
     for (GameLight light : lights) {
       light.resetCharge();
-      if (lights.size() == 2) {
+      if (lights.size() == 2) {  
         light.speed += 0.8; 
       }
     }
