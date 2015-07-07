@@ -9,7 +9,7 @@ GameTeam team2 = new GameTeam(2, color(0, 0, 255));
                
 GameTeam winningTeam;
 
-int round = 0       ;                                                                                      
+int round = 0;                                                                                      
 float roundTime = 60 * 60;
 float roundTimer = roundTime;
 

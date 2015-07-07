@@ -22,7 +22,7 @@ public class GameLight extends LEDLightStrip {
   }
     
   private void setTimeTillNext() {
-     timeTillNext = 5 / speed;
+     timeTillNext = 8 / speed;
   }
     
   public void update() {
@@ -53,6 +53,7 @@ public class GameLight extends LEDLightStrip {
       
       if (feedbackTimer <= 0) {
         readyToCharge(); 
+        mode = regularMode;
       }
     }
   }
